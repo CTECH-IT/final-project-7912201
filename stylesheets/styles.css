@@ -1,1 +1,13 @@
-/* Put your CSS here */
+.scoreholder {
+    display: flex;
+    flex-direction: row;
+    width: 800px;
+    justify-content: space-around;
+}
+
+#game-box {
+align-items: center;
+width: 100%;
+justify-content: space-around;
+
+}

@@ -3,24 +3,33 @@
 
   <head>
     <meta charset="utf-8">
-    <title>My Awesome Website</title>
-    <meta name="author" content="Put your name here">
+    <title>Caleb's Platformer</title>
+    <meta name="author" content="Caleb Pardeik">
     
-    <!-- If you are using p5.js to create drawings or games, uncomment the next line: -->
-    <!--
-      <script src="https://cdn.jsdelivr.net/npm/p5@1.4.1/lib/p5.js"></script>
-    -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="stylesheets/styles.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.21.0/dist/phaser.js"></script>
   </head>
 
 <body>
-  <header>
-    <h1 class="page-title">My Awesome Website</h1>
-    <p>This is some awesome text.</p>
-  </header>
+  <div class="scoreholder">
+    <p id="testtext1">A</p>
+    <p id="testtext2">A</p>
+    <p id="testtext3">A</p>
+    <p id="testtext4">A</p>
+    <p id="testtext5">A</p>
+  </div>
 
+  
+  <div id="game-box"></div>
+
+  
   <script src="scripts/main.js"></script>
+  <script src="scripts/test.js"></script>
+  
 </body>
+
 </html>
