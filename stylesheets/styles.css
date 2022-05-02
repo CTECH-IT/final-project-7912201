@@ -1,13 +1,62 @@
-.scoreholder {
+.topbar {
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+}
+
+.scoreholder1 {
+    align-items: center;
     display: flex;
     flex-direction: row;
-    width: 800px;
     justify-content: space-around;
+    width: 800px;
+}
+
+.bottombar {
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+}
+
+.scoreholder2 {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 800px;
 }
 
 #game-box {
-align-items: center;
-width: 100%;
-justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    justify-content: space-around;
+}
+    
+.scoreoff {
+    background: linear-gradient(#ff2424, #ffa9a9 5%, #810000 15%, #ca0000, #ff4141 90%, #ca0000);
+    padding: 10px;
+    border: 2px solid black;
+    box-shadow: 2px 5px 0px black;
+    text-shadow: 1px 1px 3px white;
+
+}
+
+.scoreon {
+    background: linear-gradient(#24bdff, #a9eeff 5%, #006781 15%, #0097ca, #41d0ff 90%, #00b2ca);
+    padding: 10px;
+    border: 2px solid black;
+    box-shadow: 2px 5px 0px black;
+    text-shadow: 1px 1px 3px white;
+
+}
+
+html {
+    background: gray;
+}
+
+canvas {
+    border: 6px outset #444444;
 
 }

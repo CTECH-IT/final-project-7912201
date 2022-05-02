@@ -1,14 +1,19 @@
+let canvasWidth = 800;
+
 let config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
     parent: 'game-box',
     physics: {
         default: "arcade",
         arcade: {
             gravity: { y: 300 },
-            debug: true
+            debug: false
         }
+    },
+    scale: {
+        width: canvasWidth,
+        height: 600
+        
     },
     scene: {
         preload: preload,
@@ -33,6 +38,8 @@ function preload() {
     this.load.image("bomb", "assets/bomb.png");
     this.load.spritesheet("dude", "assets/dude.png", 
         { frameWidth: 32, frameHeight: 48 });
+    this.load.spritesheet("guy", "assets/guy.png", 
+        { frameWidth: 32, frameHeight: 48 });
 }
 
 function create() {
@@ -46,10 +53,13 @@ function create() {
     platforms.create(50, 250, "ground");
     platforms.create(750, 250, "ground");    
 
-    player = this.physics.add.sprite(100, 450, "dude");
+    player1 = this.physics.add.sprite(100, 450, "dude");
+    player2 = this.physics.add.sprite(700, 450, "guy");
 
-    player.setBounce(0.2);
-    player.setCollideWorldBounds(true)
+    player1.setBounce(0.2);
+    player1.setCollideWorldBounds(true)
+    player2.setBounce(0.2);
+    player2.setCollideWorldBounds(true)
 
     this.anims.create({
         key: "left",
@@ -79,9 +89,40 @@ function create() {
         repeat: -1
     });
 
-    this.physics.add.collider(player, platforms);
+    this.anims.create({
+        key: "left2",
+    
+        frames: this.anims.generateFrameNumbers("guy", { start: 0, end: 3}),
+    
+        frameRate: 10,
+    
+        repeat: -1
+    });
+    
+    this.anims.create({
+        key: "turn2",
+    
+        frames: [{key: "guy", frame: 4}],
+    
+        frameRate: 20,
+    });
+    
+    this.anims.create({
+        key: "right2",
+    
+        frames: this.anims.generateFrameNumbers("guy", { start: 5, end: 8}),
+    
+        frameRate: 10,
+    
+        repeat: -1
+    });
+
+    this.physics.add.collider(player1, platforms);
+    this.physics.add.collider(player2, platforms);
 
     cursors = this.input.keyboard.createCursorKeys();
+    console.log(cursors)
+    keys = this.input.keyboard.addKeys({'A':65, 'D':68, 'W':87, 'S':83});
 
     stars = this.physics.add.group({
         key: "star",
@@ -94,13 +135,15 @@ function create() {
 
     this.physics.add.collider(stars, platforms);
 
-    this.physics.add.overlap(player, stars, collectStar, null, this);
+    this.physics.add.overlap(player1, stars, collectStar1, null, this);
+    this.physics.add.overlap(player2, stars, collectStar2, null, this);
 
     scoreText = this.add.text(16, 16, "score: 0", {fontSize: "32px", fill: "#000" });
 
     bombs = this.physics.add.group();
     this.physics.add.collider(bombs, platforms);    
-    this.physics.add.collider(player, bombs, hitBomb, null, this);    
+    this.physics.add.collider(player1, bombs, hitBomb, null, this);    
+    this.physics.add.collider(player2, bombs, hitBomb, null, this);    
 };
 
 function stopgame() {
@@ -112,32 +155,72 @@ function stopgame() {
 
 function update() {
 
-    if (cursors.left.isDown) {
-        player.setVelocityX(-160);
+    if (keys.A.isDown) {
+        player1.setVelocityX(-160);
 
-        player.anims.play("left", true);
-    } else if (cursors.right.isDown) {
-        player.setVelocityX(160);
+        player1.anims.play("left", true);
+    } else if (keys.D.isDown) {
+        player1.setVelocityX(160);
 
-        player.anims.play("right", true);
+        player1.anims.play("right", true);
     } else {
-        player.setVelocityX(0);
+        player1.setVelocityX(0);
 
-        player.anims.play("turn");
+        player1.anims.play("turn");
     }
 
-    if (cursors.up.isDown && player.body.touching.down) {
-        player.setVelocityY(-330);
+    if (keys.W.isDown && player1.body.touching.down) {
+        player1.setVelocityY(-330);
+    }
+
+    
+    if (cursors.left.isDown) {
+        player2.setVelocityX(-160);
+
+        player2.anims.play("left", true);
+    } else if (cursors.right.isDown) {
+        player2.setVelocityX(160);
+
+        player2.anims.play("right", true);
+    } else {
+        player2.setVelocityX(0);
+
+        player2.anims.play("turn");
+    }
+
+    if (cursors.up.isDown && player2.body.touching.down) {
+        player2.setVelocityY(-330);
     }
 
 };
 
-function collectStar(player, star) {
+function collectStar1(player, star) {
     star.disableBody(true, true)
 
     score += 10;
     scoreText.setText("Score: " + score);
-    changeTextIncrament()
+    changeTextIncrament1()
+
+    if(stars.countActive(true) === 0) {
+        stars.children.iterate(function (child) {
+            child.enableBody(true, child.x, 0, true, true);
+        });
+
+        var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
+
+        var bomb = bombs.create(x, 16, "bomb");
+        bomb.setBounce(1);
+        bomb.setCollideWorldBounds(true);
+        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    }
+}
+
+function collectStar2(player, star) {
+    star.disableBody(true, true)
+
+    score += 10;
+    scoreText.setText("Score: " + score);
+    changeTextIncrament2()
 
     if(stars.countActive(true) === 0) {
         stars.children.iterate(function (child) {
