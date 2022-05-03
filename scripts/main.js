@@ -43,7 +43,9 @@ function preload() {
 }
 
 function create() {
-    this.add.image(400, 300, "sky")
+    this.add.image(400, -300, "sky")
+    this.add.image(400, 300, "sky").rotation = 3.1415926;
+
     
     platforms = this.physics.add.staticGroup();
 
@@ -55,6 +57,7 @@ function create() {
 
     player1 = this.physics.add.sprite(100, 450, "dude");
     player2 = this.physics.add.sprite(700, 450, "guy");
+    cameraSetup = this.add.image(-100, 300, "star");
 
     player1.setBounce(0.2);
     player1.setCollideWorldBounds(true)
@@ -143,7 +146,10 @@ function create() {
     bombs = this.physics.add.group();
     this.physics.add.collider(bombs, platforms);    
     this.physics.add.collider(player1, bombs, hitBomb, null, this);    
-    this.physics.add.collider(player2, bombs, hitBomb, null, this);    
+    this.physics.add.collider(player2, bombs, hitBomb, null, this);   
+    
+    this.cameras.main.setBounds(00, -600, 800, 1200)
+    this.cameras.main.startFollow(cameraSetup)
 };
 
 function stopgame() {
@@ -154,6 +160,10 @@ function stopgame() {
 
 
 function update() {
+    if(cameraSetup) {
+
+        cameraSetup.y -= 0.1;
+    }
 
     if (keys.A.isDown) {
         player1.setVelocityX(-160);
@@ -197,44 +207,15 @@ function update() {
 function collectStar1(player, star) {
     star.disableBody(true, true)
 
-    score += 10;
-    scoreText.setText("Score: " + score);
     changeTextIncrament1()
 
-    if(stars.countActive(true) === 0) {
-        stars.children.iterate(function (child) {
-            child.enableBody(true, child.x, 0, true, true);
-        });
-
-        var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-
-        var bomb = bombs.create(x, 16, "bomb");
-        bomb.setBounce(1);
-        bomb.setCollideWorldBounds(true);
-        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    }
 }
 
 function collectStar2(player, star) {
     star.disableBody(true, true)
-
-    score += 10;
-    scoreText.setText("Score: " + score);
     changeTextIncrament2()
-
-    if(stars.countActive(true) === 0) {
-        stars.children.iterate(function (child) {
-            child.enableBody(true, child.x, 0, true, true);
-        });
-
-        var x = (player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-
-        var bomb = bombs.create(x, 16, "bomb");
-        bomb.setBounce(1);
-        bomb.setCollideWorldBounds(true);
-        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    }
 }
+
 
 function hitBomb(player, bomb) {
     this.physics.pause();
