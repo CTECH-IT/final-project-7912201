@@ -6,11 +6,11 @@ var player2score = 0;
 function changeScoreUp(id, boolean, player) {
     if(boolean) {
         if (player == 1) {
-            player1score += 1;
+            console.log(player1score)
             document.getElementById(id).innerHTML = "+" + player1score;
-        } else {
-            player2score += 1;
-            document.getElementById(id).innerHTML = player2score;
+            console.log(player1score)
+        } else if (player == 2) {
+            document.getElementById(id).innerHTML = "+" + player2score;
             console.log(player2score)
         }
     } else {
@@ -32,9 +32,12 @@ function changeTextIncrament1() {
             if (document.getElementById("player1-3").innerHTML == "O") {
                 if (document.getElementById("player1-4").innerHTML == "O") {
                     if (document.getElementById("player1-5").innerHTML != "A") {
+                        player1score += 1;
                         changeScoreUp("player1-5", true, 1)
+                        document.getElementById("player1-5").classList.remove("scoreoff")
+                        document.getElementById("player1-5").classList.add("scoreon")
                     }
-                    changeScoreUp("player1-5", false, 1)
+                    changeScoreUp("player1-5", true, 1)
 
                 }
                 changeScoreUp("player1-4", false, 1)
@@ -57,9 +60,12 @@ function changeTextIncrament2() {
             if (document.getElementById("player2-3").innerHTML == "O") {
                 if (document.getElementById("player2-4").innerHTML == "O") {
                     if (document.getElementById("player2-5").innerHTML != "A") {
+                        player2score += 1;
                         changeScoreUp("player2-5", true, 2)
+                        document.getElementById("player2-5").classList.remove("scoreoff")
+                        document.getElementById("player2-5").classList.add("scoreon")
                     }
-                    changeScoreUp("player2-5", false, 2)
+                    changeScoreUp("player2-5", true, 2);
                 }
                 changeScoreUp("player2-4", false, 2)
             }

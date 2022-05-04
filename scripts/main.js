@@ -3,17 +3,14 @@ let canvasWidth = 800;
 let config = {
     type: Phaser.AUTO,
     parent: 'game-box',
+    width: canvasWidth,
+    height: 600,
     physics: {
         default: "arcade",
         arcade: {
             gravity: { y: 300 },
             debug: false
         }
-    },
-    scale: {
-        width: canvasWidth,
-        height: 600
-        
     },
     scene: {
         preload: preload,
@@ -33,6 +30,7 @@ let bombs;
 
 function preload() {
     this.load.image("sky", "assets/sky.png");
+    this.load.image("tree", "assets/tree.png");
     this.load.image("ground", "assets/platform.png");
     this.load.image("star", "assets/star.png");
     this.load.image("bomb", "assets/bomb.png");
@@ -49,20 +47,27 @@ function create() {
     
     platforms = this.physics.add.staticGroup();
 
-    platforms.create(400, 568, "ground").setScale(2).refreshBody();
+    //ground
+    platforms.create(600, 568, "ground").setScale(2).refreshBody();
+    platforms.create(200, 568, "ground").setScale(2).refreshBody();
 
-    platforms.create(600, 400, "ground");
-    platforms.create(50, 250, "ground");
-    platforms.create(750, 250, "ground");    
+    platforms.create(600, 400, "ground"); //platform 1
+    platforms.create(50, 250, "ground"); //left 1
+    platforms.create(250, 250, "ground"); //left 2
+    platforms.create(750, 250, "ground");  //right 1
+    
+    platforms.create(150, 100, "ground"); //left 3
+    platforms.create(225, -15, "tree"); //left tree 1
+    platforms.create(150, -50, "ground"); //left 3
 
     player1 = this.physics.add.sprite(100, 450, "dude");
     player2 = this.physics.add.sprite(700, 450, "guy");
     cameraSetup = this.add.image(-100, 300, "star");
 
     player1.setBounce(0.2);
-    player1.setCollideWorldBounds(true)
+    player1.setCollideWorldBounds(false)
     player2.setBounce(0.2);
-    player2.setCollideWorldBounds(true)
+    player2.setCollideWorldBounds(false)
 
     this.anims.create({
         key: "left",
@@ -141,7 +146,6 @@ function create() {
     this.physics.add.overlap(player1, stars, collectStar1, null, this);
     this.physics.add.overlap(player2, stars, collectStar2, null, this);
 
-    scoreText = this.add.text(16, 16, "score: 0", {fontSize: "32px", fill: "#000" });
 
     bombs = this.physics.add.group();
     this.physics.add.collider(bombs, platforms);    
@@ -162,7 +166,7 @@ function stopgame() {
 function update() {
     if(cameraSetup) {
 
-        cameraSetup.y -= 0.1;
+        cameraSetup.y -= 0.3;
     }
 
     if (keys.A.isDown) {
