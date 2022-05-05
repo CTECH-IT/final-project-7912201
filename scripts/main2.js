@@ -1,4 +1,4 @@
-/*let canvasWidth = 800;
+let canvasWidth = 800;
 
 let config = {
     type: Phaser.AUTO,
@@ -28,6 +28,8 @@ let platforms;
 let player;
 let cursors;
 let stars;
+var cameraSetup = 0;
+cameraChange = 1;
 
 let bombs;
 
@@ -47,35 +49,18 @@ function preload() {
 function create() {
 
     
-    this.add.image(400, -300, "sky")
-    this.add.image(400, 300, "sky").rotation = 3.1415926;
+    this.add.image(400, 300, "sky").setScale(0.5).setTint(0x4f4f3f);
 
     
     platforms = this.physics.add.staticGroup();
+    enemies = this.physics.add.staticGroup();
 
     //ground
     platforms.create(600, 568, "ground").setScale(2).refreshBody();
-    platforms.create(200, 568, "ground").setScale(2).refreshBody();
 
-    platforms.create(600, 400, "ground"); //platform 1
-    platforms.create(50, 250, "ground"); //left 1
-    platforms.create(250, 250, "ground"); //left 2
-    platforms.create(750, 250, "ground");  //right 1
-    
-    platforms.create(150, 100, "ground"); //left 3
-    platforms.create(225, -15, "tree"); //left tree 1
-    platforms.create(225, -120, "treetopper"); //left treetopper 1
-    platforms.create(150, -50, "ground"); //left 4
-    
-    platforms.create(550, 50, "ground"); //right 3
-    platforms.create(850, 150, "ground"); //right 3
-    platforms.create(475, -65, "tree"); //right tree 1
-    platforms.create(475, -170, "treetopper"); //right treetopper 1
-    platforms.create(550, -50, "ground"); //right 4
 
     player1 = this.physics.add.sprite(100, 450, "dude");
-    player2 = this.physics.add.sprite(700, 450, "guy");
-    cameraSetup = this.add.image(-900, 300, "star");
+    player2 = this.physics.add.sprite(700, 450, "dude");
 
     player1.setBounce(0.2);
     player1.setCollideWorldBounds(true)
@@ -144,45 +129,32 @@ function create() {
 
     cursors = this.input.keyboard.createCursorKeys();
     console.log(cursors)
-    keys = this.input.keyboard.addKeys({'A':65, 'D':68, 'W':87, 'S':83});
+    keys = this.input.keyboard.addKeys({'A':65, 'D':68, 'W':87, 'S':83, 'Space':32});
 
-    stars = this.physics.add.group({
-        key: "star",
-        repeat: 11,
-        setXY: {x: 12, y: 0, stepX: 70}
-    })
-    stars.children.iterate(function (child) {
-        child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-    });
 
-    this.physics.add.collider(stars, platforms);
 
     this.physics.add.overlap(player1, stars, collectStar1, null, this);
     this.physics.add.overlap(player2, stars, collectStar2, null, this);
 
 
-    bombs = this.physics.add.group();
-    this.physics.add.collider(bombs, platforms);    
-    this.physics.add.collider(player1, bombs, hitBomb, null, this);    
-    this.physics.add.collider(player2, bombs, hitBomb, null, this);   
-    
-    this.cameras.main.setBounds(00, -600, 800, 1200)
-    this.cameras.main.startFollow(cameraSetup)
 };
-
-function stopgame() {
-    gygeyjhwiu.pause()
-}
 
 
 
 
 function update() {
-    if(cameraSetup) {
-
-        //cameraSetup.y -= 0.3;
+    if(cameraSetup >= 100) { 
+        spawnEnemy();
     }
 
+    if(cameraSetup <= 0) { 
+        spawnEnemy();
+        cameraChange = 1
+        
+    }
+    if cameraSetup {
+        cameraSetup += cameraChange;
+    }
 
     if (keys.A.isDown) {
         player1.setVelocityX(-160);
@@ -201,6 +173,7 @@ function update() {
     if (keys.W.isDown && player1.body.touching.down) {
         player1.setVelocityY(-330);
     }
+
 
     
     if (cursors.left.isDown) {
@@ -235,15 +208,7 @@ function collectStar2(player, star) {
     changeTextIncrament2()
 }
 
+function spawnEnemy() {
+        enemies.create(Phaser.Math.Between(0, 200), Phaser.Math.Between(0, 600), "platform")
 
-function hitBomb(player, playerDeath) {
-    this.physics.pause();
-    player.setTint(0xff0000);
-    player.anims.play("turn");
-
-    gameOver = true;
 }
-
-function offscreen() {
-    this.physics.pause()
-}*/
