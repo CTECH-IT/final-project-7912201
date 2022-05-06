@@ -1,5 +1,6 @@
 let canvasWidth = 800;
 
+
 let config = {
     type: Phaser.AUTO,
     parent: 'game-box',
@@ -31,6 +32,8 @@ let stars;
 var cameraSetup = 0;
 cameraChange = 1;
 
+
+
 let bombs;
 
 function preload() {
@@ -44,16 +47,29 @@ function preload() {
         { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet("guy", "assets/guy.png", 
         { frameWidth: 32, frameHeight: 48 });
+        
 }
 
-function create() {
 
+function makeEnemy() {}
+function create() {
+    
+    
     
     this.add.image(400, 300, "sky").setScale(0.5).setTint(0x4f4f3f);
-
+    
     
     platforms = this.physics.add.staticGroup();
-    enemies = this.physics.add.staticGroup();
+    enemies = this.physics.add.group({allowGravity: false});
+    
+
+
+
+    makeEnemy.prototype.make = function(x, y, image) {
+        enemies.create(x, y, image);
+    }
+
+
 
     //ground
     platforms.create(600, 568, "ground").setScale(2).refreshBody();
@@ -145,6 +161,7 @@ function create() {
 function update() {
     if(cameraSetup >= 100) { 
         spawnEnemy();
+        cameraChange = -1
     }
 
     if(cameraSetup <= 0) { 
@@ -152,12 +169,14 @@ function update() {
         cameraChange = 1
         
     }
-    if cameraSetup {
+    if (true) {
         cameraSetup += cameraChange;
+        enemies.setVelocityX(10);
     }
 
     if (keys.A.isDown) {
         player1.setVelocityX(-160);
+        
 
         player1.anims.play("left", true);
     } else if (keys.D.isDown) {
@@ -208,7 +227,12 @@ function collectStar2(player, star) {
     changeTextIncrament2()
 }
 
-function spawnEnemy() {
-        enemies.create(Phaser.Math.Between(0, 200), Phaser.Math.Between(0, 600), "platform")
 
+
+function spawnEnemy() {
+    makeEnemy.prototype.make(0, getEnemyY(), "tree")
+}
+
+function getEnemyY() {
+    return(Phaser.Math.Between(0, 600));
 }
