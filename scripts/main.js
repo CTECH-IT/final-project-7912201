@@ -1,4 +1,4 @@
-/*let canvasWidth = 800;
+let canvasWidth = 800;
 
 let config = {
     type: Phaser.AUTO,
@@ -246,4 +246,4 @@ function hitBomb(player, playerDeath) {
 
 function offscreen() {
     this.physics.pause()
-}*/
+}
