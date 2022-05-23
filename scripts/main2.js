@@ -52,11 +52,16 @@ function preload() {
         { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet("cronala", "assets/cronala.png", 
         { frameWidth: 50, frameHeight: 50 });
+    this.load.spritesheet("cronala2", "assets/cronala2.png", 
+        { frameWidth: 50, frameHeight: 50 });
+    this.load.spritesheet("fireball", "assets/fireball.png", 
+        { frameWidth: 18, frameHeight: 10 });
         
 }
 
 
 function makeEnemy() {}
+function makeFastEnemy() {}
 function create() {
     
     //for movement - adds cursors and keys so it works when you press buttons
@@ -71,13 +76,19 @@ function create() {
     
     platforms = this.physics.add.staticGroup();
     enemies = this.physics.add.group({allowGravity: false, immovable: true});
+    fastEnemies = this.physics.add.group({allowGravity: false, immovable: true});
+    fireballs = this.physics.add.group({allowGravity: false, immovable: true});
     
-
+    fireball = fireballs.create(200, 200, "fireball")
 
 
     makeEnemy.prototype.make = function(x, y, image) {
         reply = enemies.create(x, y, image);
     }
+    makeFastEnemy.prototype.make = function(x, y, image) {
+        reply2 = fastEnemies.create(x, y, image);
+    }
+
 
 
 
@@ -136,6 +147,18 @@ function create() {
         frameRate: 5,
         repeat: -1
     });
+    this.anims.create({
+        key: "moveCronala2",
+        frames: this.anims.generateFrameNumbers("cronala2", {start: 0, end: 1}),
+        frameRate: 10,
+        repeat: -1
+    });
+    this.anims.create({
+        key: "animateFire",
+        frames: this.anims.generateFrameNumbers("fireball", {start: 0, end: 1}),
+        frameRate: 10,
+        repeat: -1
+    });
 
 
     this.physics.add.collider(player1, platforms);
@@ -155,17 +178,20 @@ function create() {
 function update() {
     if(cameraSetup >= 100) { 
         spawnEnemy();
+        spawnFastEnemy();
         cameraChange = -1
     }
 
     if(cameraSetup <= 0) { 
         spawnEnemy();
+        spawnFastEnemy();
         cameraChange = 1
         
     }
     if (true) {
         cameraSetup += cameraChange;
         enemies.setVelocityX(10);
+        fastEnemies.setVelocityX(30);
 
     }
 
@@ -223,6 +249,8 @@ function update() {
         player2.setVelocityX(-160);
         player2.setVelocityY(-160);
         player2.anims.play("left", true);
+        fireball.anims.play("animateFire")
+
 
     } else if (cursors.down.isDown && cursors.left.isDown) { //down left
         player2.setVelocityX(-160);
@@ -266,10 +294,14 @@ function update() {
     }
 
 
-    //makes it so the cronalas 
+    //makes it so the cronalas  animate
     if(true) {
         reply.anims.play("moveCronala")
+        reply2.anims.play("moveCronala2")
     }
+    if(true) {
+    }
+
 
 
 };
@@ -294,4 +326,12 @@ function spawnEnemy() {
 
 function getEnemyY() {
     return(Phaser.Math.Between(0, 600));
+}
+
+function spawnFastEnemy() {
+    makeFastEnemy.prototype.make(0, getEnemyY(), "cronala2")
+}
+
+function getEnemyY() {
+    return(Phaser.Math.Between(25, 575));
 }
