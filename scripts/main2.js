@@ -29,6 +29,12 @@ let platforms;
 let player;
 let cursors;
 let stars;
+let enemies;
+let fastEnemies;
+let player1Timer = 25;
+let player2Timer = 25;
+let gameTimer = 0;
+
 
 var cameraSetup = 0;
 cameraChange = 1;
@@ -75,11 +81,11 @@ function create() {
     
     
     platforms = this.physics.add.staticGroup();
-    enemies = this.physics.add.group({allowGravity: false, immovable: true});
-    fastEnemies = this.physics.add.group({allowGravity: false, immovable: true});
+    enemies = this.physics.add.group({allowGravity: false, immovable: true, key:"enemy"});
+    fastEnemies = this.physics.add.group({allowGravity: false, immovable: true, key:"fastEnemy"});
     fireballs = this.physics.add.group({allowGravity: false, immovable: true});
-    
-    fireball = fireballs.create(200, 200, "fireball")
+    fireball = fireballs.create(-100, -100, "fireball")
+
 
 
     makeEnemy.prototype.make = function(x, y, image) {
@@ -93,9 +99,7 @@ function create() {
 
 
     //ground
-    platforms.create(600, 568, "ground").setScale(2).refreshBody();
-
-    
+    //platforms.create(600, 568, "ground").setScale(2).refreshBody();
 
     player1shadow = this.physics.add.sprite(100, 450, "lemon", {allowGravity: false}).setTint(0);
     player1 = this.physics.add.sprite(100, 450, "lemon", {allowGravity: false});
@@ -165,9 +169,16 @@ function create() {
     this.physics.add.collider(player2, platforms);
     this.physics.add.collider(player1, enemies);
     this.physics.add.collider(player2, enemies);
+    this.physics.add.collider(player1, fastEnemies);
+    this.physics.add.collider(player2, fastEnemies);
 
-    this.physics.add.overlap(player1, stars, collectStar1, null, this);
-    this.physics.add.overlap(player2, stars, collectStar2, null, this);
+    this.physics.add.overlap(fireballs, enemies, hitCronala, null, this);
+    this.physics.add.overlap(fireballs, fastEnemies, hitCronala2, null, this);
+
+
+
+    
+
 
 
 };
@@ -180,6 +191,7 @@ function update() {
         spawnEnemy();
         spawnFastEnemy();
         cameraChange = -1
+
     }
 
     if(cameraSetup <= 0) { 
@@ -187,12 +199,6 @@ function update() {
         spawnFastEnemy();
         cameraChange = 1
         
-    }
-    if (true) {
-        cameraSetup += cameraChange;
-        enemies.setVelocityX(10);
-        fastEnemies.setVelocityX(30);
-
     }
 
     if (keys.W.isDown && keys.A.isDown) { //up left
@@ -249,7 +255,6 @@ function update() {
         player2.setVelocityX(-160);
         player2.setVelocityY(-160);
         player2.anims.play("left", true);
-        fireball.anims.play("animateFire")
 
 
     } else if (cursors.down.isDown && cursors.left.isDown) { //down left
@@ -293,30 +298,33 @@ function update() {
         player2.anims.play("turn");
     }
 
+    // FIRE!!!! 
+    if (keys.Space.isDown && (player1Timer < 0)) {
+        makePlayer1Fire()
+        player1Timer = 25
+    }
+    if (keys.ctrl.isDown && (player2Timer < 0)) {
+        makePlayer2Fire()
+        player2Timer = 25
+    }
+
 
     //makes it so the cronalas  animate
     if(true) {
         reply.anims.play("moveCronala")
         reply2.anims.play("moveCronala2")
-    }
-    if(true) {
+        fireball.setVelocityX(-300)
+        cameraSetup += cameraChange;
+        enemies.setVelocityX(40);
+        fastEnemies.setVelocityX(90);
+        player1Timer -= 1;
+        player2Timer -= 1;
+        gameTimer += 1;
     }
 
 
 
 };
-
-function collectStar1(player, star) {
-    star.disableBody(true, true)
-
-    changeTextIncrament1()
-
-}
-
-function collectStar2(player, star) {
-    star.disableBody(true, true)
-    changeTextIncrament2()
-}
 
 
 
@@ -334,4 +342,23 @@ function spawnFastEnemy() {
 
 function getEnemyY() {
     return(Phaser.Math.Between(25, 575));
+}
+
+function makePlayer1Fire() {
+    fireball = fireballs.create(player1.x, player1.y, "fireball")
+}
+function makePlayer2Fire() {
+    fireball = fireballs.create(player2.x, player2.y, "fireball")
+}
+
+function hitCronala(fireball, enemy) {
+    enemy.disableBody(true, true)
+    fireball.disableBody(true, true)
+    
+}
+
+function hitCronala2(fireball, fastEnemy) {
+    fastEnemy.disableBody(true, true)
+    fireball.disableBody(true, true)
+
 }
