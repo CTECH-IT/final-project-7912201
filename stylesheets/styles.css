@@ -60,3 +60,7 @@ canvas {
     border: 6px outset #444444;
 
 }
+
+infisible {
+    visibility: hidden;
+}
