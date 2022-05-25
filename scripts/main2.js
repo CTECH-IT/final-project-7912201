@@ -50,6 +50,7 @@ function preload() {
     this.load.image("ground", "assets/platform.png");
     this.load.image("star", "assets/star.png");
     this.load.image("bomb", "assets/bomb.png");
+    this.load.image("myship", "assets/myship.png");
     this.load.spritesheet("dude", "assets/dude.png", 
         { frameWidth: 32, frameHeight: 48 });
     this.load.spritesheet("lemon", "assets/lemon.png", 
@@ -66,6 +67,8 @@ function preload() {
 }
 
 
+
+
 function makeEnemy() {}
 function makeFastEnemy() {}
 function create() {
@@ -78,13 +81,16 @@ function create() {
     
     
     this.add.image(400, 300, "sky").setScale(0.5).setTint(0x4f4f6f);
+    this.add.image(793, 300, "myship")
     
     
     platforms = this.physics.add.staticGroup();
     enemies = this.physics.add.group({allowGravity: false, immovable: true, key:"enemy"});
     fastEnemies = this.physics.add.group({allowGravity: false, immovable: true, key:"fastEnemy"});
-    fireballs = this.physics.add.group({allowGravity: false, immovable: true});
-    fireball = fireballs.create(-100, -100, "fireball")
+    fireballs1 = this.physics.add.group({allowGravity: false, immovable: true});
+    fireballs2 = this.physics.add.group({allowGravity: false, immovable: true});
+    fireball1 = fireballs1.create(-100, -100, "fireball")
+    fireball2 = fireballs2.create(-100, -100, "fireball")
 
 
 
@@ -101,8 +107,8 @@ function create() {
     //ground
     //platforms.create(600, 568, "ground").setScale(2).refreshBody();
 
-    player1shadow = this.physics.add.sprite(100, 450, "lemon", {allowGravity: false}).setTint(0);
-    player1 = this.physics.add.sprite(100, 450, "lemon", {allowGravity: false});
+    player1shadow = this.physics.add.sprite(700, 150, "lemon", {allowGravity: false}).setTint(0);
+    player1 = this.physics.add.sprite(700, 150, "lemon", {allowGravity: false});
     player2shadow = this.physics.add.sprite(700, 450, "lemon", {allowGravity: false}).setTint(0);
     player2 = this.physics.add.sprite(700, 450, "lemon", {allowGravity: false});
 
@@ -172,9 +178,10 @@ function create() {
     this.physics.add.collider(player1, fastEnemies);
     this.physics.add.collider(player2, fastEnemies);
 
-    this.physics.add.overlap(fireballs, enemies, hitCronala, null, this);
-    this.physics.add.overlap(fireballs, fastEnemies, hitCronala2, null, this);
-
+    this.physics.add.overlap(fireballs1, enemies, hitCronala_fireball1, null, this);
+    this.physics.add.overlap(fireballs1, fastEnemies, hitCronala2_fireball1, null, this);
+    this.physics.add.overlap(fireballs1, enemies, hitCronala_fireball2, null, this);
+    this.physics.add.overlap(fireballs1, fastEnemies, hitCronala2_fireball2, null, this);
 
 
     
@@ -313,7 +320,8 @@ function update() {
     if(true) {
         reply.anims.play("moveCronala")
         reply2.anims.play("moveCronala2")
-        fireball.setVelocityX(-300)
+        fireball1.setVelocityX(-300)
+        fireball2.setVelocityX(-300)
         cameraSetup += cameraChange;
         enemies.setVelocityX(40);
         fastEnemies.setVelocityX(90);
@@ -345,20 +353,34 @@ function getEnemyY() {
 }
 
 function makePlayer1Fire() {
-    fireball = fireballs.create(player1.x, player1.y, "fireball")
+    fireball1 = fireballs1.create(player1.x, player1.y, "fireball")
 }
 function makePlayer2Fire() {
-    fireball = fireballs.create(player2.x, player2.y, "fireball")
+    fireball2 = fireballs2.create(player2.x, player2.y, "fireball")
 }
 
-function hitCronala(fireball, enemy) {
+function hitCronala_fireball1(fireball, enemy) {
     enemy.disableBody(true, true)
     fireball.disableBody(true, true)
-    
+    changeTextIncrament1()
+
 }
 
-function hitCronala2(fireball, fastEnemy) {
+function hitCronala2_fireball1(fireball, fastEnemy) {
+    fastEnemy.disableBody(true, true)
+    fireball.disableBody(true, true)
+    changeTextIncrament1()
+
+}
+function hitCronala_fireball2(fireball, enemy) {
+    enemy.disableBody(true, true)
+    fireball.disableBody(true, true)
+    changeTextIncrament2()
+
+}
+
+function hitCronala2_fireball2(fireball, fastEnemy) {
     fastEnemy.disableBody(true, true)
     fireball.disableBody(true, true)
 
-}
+}    changeTextIncrament2()
