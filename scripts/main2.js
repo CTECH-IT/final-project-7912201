@@ -34,6 +34,8 @@ let fastEnemies;
 let player1Timer = 25;
 let player2Timer = 25;
 let gameTimer = 0;
+let shipHealth = 10;
+let gameStart = 1;
 
 
 var cameraSetup = 0;
@@ -63,14 +65,14 @@ function preload() {
         { frameWidth: 50, frameHeight: 50 });
     this.load.spritesheet("fireball", "assets/fireball.png", 
         { frameWidth: 18, frameHeight: 10 });
+    this.load.spritesheet("shiphealth", "assets/shiphealth.png", 
+        { frameWidth: 20, frameHeight: 100 });
         
 }
 
 
 
 
-function makeEnemy() {}
-function makeFastEnemy() {}
 function create() {
     
     //for movement - adds cursors and keys so it works when you press buttons
@@ -81,25 +83,23 @@ function create() {
     
     
     this.add.image(400, 300, "sky").setScale(0.5).setTint(0x4f4f6f);
-    this.add.image(793, 300, "myship")
     
     
     platforms = this.physics.add.staticGroup();
+    ship = this.physics.add.staticGroup();
     enemies = this.physics.add.group({allowGravity: false, immovable: true, key:"enemy"});
     fastEnemies = this.physics.add.group({allowGravity: false, immovable: true, key:"fastEnemy"});
     fireballs1 = this.physics.add.group({allowGravity: false, immovable: true});
     fireballs2 = this.physics.add.group({allowGravity: false, immovable: true});
     fireball1 = fireballs1.create(-100, -100, "fireball")
     fireball2 = fireballs2.create(-100, -100, "fireball")
+    shiphealth = platforms.create(200, 200, "shiphealth")
+    myship = ship.create(793, 300, "myship")
 
 
 
-    makeEnemy.prototype.make = function(x, y, image) {
-        reply = enemies.create(x, y, image);
-    }
-    makeFastEnemy.prototype.make = function(x, y, image) {
-        reply2 = fastEnemies.create(x, y, image);
-    }
+
+
 
 
 
@@ -107,9 +107,7 @@ function create() {
     //ground
     //platforms.create(600, 568, "ground").setScale(2).refreshBody();
 
-    player1shadow = this.physics.add.sprite(700, 150, "lemon", {allowGravity: false}).setTint(0);
     player1 = this.physics.add.sprite(700, 150, "lemon", {allowGravity: false});
-    player2shadow = this.physics.add.sprite(700, 450, "lemon", {allowGravity: false}).setTint(0);
     player2 = this.physics.add.sprite(700, 450, "lemon", {allowGravity: false});
 
     player1.setBounce(0.2);
@@ -171,6 +169,64 @@ function create() {
     });
 
 
+
+    this.anims.create({
+        key: "shiphealth10",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 0, end: 0}),
+        repeat: 0
+    });
+    this.anims.create({
+        key: "shiphealth9",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 1, end: 1}),
+        repeat: 0
+    });
+    this.anims.create({
+        key: "shiphealth8",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 2, end: 2}),
+        repeat: 0
+    });
+    this.anims.create({
+        key: "shiphealth7",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 3, end: 3}),
+        repeat: 0
+    });
+    this.anims.create({
+        key: "shiphealth6",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 4, end: 4}),
+        repeat: 0
+    });
+    this.anims.create({
+        key: "shiphealth5",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 5, end: 5}),
+        repeat: 0
+    });
+    this.anims.create({
+        key: "shiphealth4",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 6, end: 6}),
+        repeat: 0
+    });
+    this.anims.create({
+        key: "shiphealth3",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 7, end: 7}),
+        repeat: 0
+    });
+    this.anims.create({
+        key: "shiphealth2",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 8, end: 8}),
+        repeat: 0
+    });
+    this.anims.create({
+        key: "shiphealth1",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 9, end: 9}),
+        repeat: 0
+    });
+    this.anims.create({
+        key: "shiphealth0",
+        frames: this.anims.generateFrameNumbers("shiphealth", {start: 10, end: 10}),
+        repeat: 0
+    });
+
+
     this.physics.add.collider(player1, platforms);
     this.physics.add.collider(player2, platforms);
     this.physics.add.collider(player1, enemies);
@@ -180,8 +236,10 @@ function create() {
 
     this.physics.add.overlap(fireballs1, enemies, hitCronala_fireball1, null, this);
     this.physics.add.overlap(fireballs1, fastEnemies, hitCronala2_fireball1, null, this);
-    this.physics.add.overlap(fireballs1, enemies, hitCronala_fireball2, null, this);
-    this.physics.add.overlap(fireballs1, fastEnemies, hitCronala2_fireball2, null, this);
+    this.physics.add.overlap(fireballs2, enemies, hitCronala_fireball2, null, this);
+    this.physics.add.overlap(fireballs2, fastEnemies, hitCronala2_fireball2, null, this);
+    this.physics.add.overlap(enemies, ship, enemyHitShip, null, this);
+    this.physics.add.overlap(fastEnemies, ship, fastEnemyHitShip, null, this);
 
 
     
@@ -194,6 +252,7 @@ function create() {
 
 
 function update() {
+    if (gameStart == 3) { // 1 for stop, 2 for controls, 3 for start
     if(cameraSetup >= 100) { 
         spawnEnemy();
         spawnFastEnemy();
@@ -207,6 +266,7 @@ function update() {
         cameraChange = 1
         
     }
+
 
     if (keys.W.isDown && keys.A.isDown) { //up left
         player1.setVelocityX(-160);
@@ -329,15 +389,28 @@ function update() {
         player2Timer -= 1;
         gameTimer += 1;
     }
+    } else {
+        makeButton()
+    }
 
 
 
 };
 
+function makeButton() {
+    gameStart 
+}
+
+function makeEnemy(x, y) {
+    reply = enemies.create(x, y, "cronala");
+}
+function makeFastEnemy(x, y) {
+    reply2 = fastEnemies.create(x, y, "cronala2");
+}
 
 
 function spawnEnemy() {
-    makeEnemy.prototype.make(0, getEnemyY(), "cronala")
+    makeEnemy(0, getEnemyY())
 }
 
 function getEnemyY() {
@@ -345,7 +418,7 @@ function getEnemyY() {
 }
 
 function spawnFastEnemy() {
-    makeFastEnemy.prototype.make(0, getEnemyY(), "cronala2")
+    makeFastEnemy(0, getEnemyY(), "cronala2")
 }
 
 function getEnemyY() {
@@ -383,4 +456,61 @@ function hitCronala2_fireball2(fireball, fastEnemy) {
     fastEnemy.disableBody(true, true)
     fireball.disableBody(true, true)
 
-}    changeTextIncrament2()
+    changeTextIncrament2()
+}
+function enemyHitShip(enemy, myship) {
+    if (shipHealth == 10) {
+        shiphealth.anims.play("shiphealth9")
+    } else if (shipHealth ==9) {
+        shiphealth.anims.play("shiphealth8")
+    } else if (shipHealth == 8) {
+        shiphealth.anims.play("shiphealth7")
+    } else if (shipHealth == 7) {
+        shiphealth.anims.play("shiphealth6")
+    } else if (shipHealth == 6) {
+        shiphealth.anims.play("shiphealth5")
+    } else if (shipHealth == 5) {
+        shiphealth.anims.play("shiphealth4")
+    } else if (shipHealth == 4) {
+        shiphealth.anims.play("shiphealth3")
+    } else if (shipHealth == 3) {
+        shiphealth.anims.play("shiphealth2")
+    } else if (shipHealth == 2) {
+        shiphealth.anims.play("shiphealth1")
+    } else if (shipHealth == 1) {
+        shiphealth.anims.play("shiphealth0")
+    } else if (shipHealth == 0) {
+        physics.stop()
+    }
+    enemy.disableBody(true, true)
+    shipHealth--;
+    
+}
+function fastEnemyHitShip(enemy, myship) {
+    if (shipHealth == 10) {
+        shiphealth.anims.play("shiphealth9")
+    } else if (shipHealth ==9) {
+        shiphealth.anims.play("shiphealth8")
+    } else if (shipHealth == 8) {
+        shiphealth.anims.play("shiphealth7")
+    } else if (shipHealth == 7) {
+        shiphealth.anims.play("shiphealth6")
+    } else if (shipHealth == 6) {
+        shiphealth.anims.play("shiphealth5")
+    } else if (shipHealth == 5) {
+        shiphealth.anims.play("shiphealth4")
+    } else if (shipHealth == 4) {
+        shiphealth.anims.play("shiphealth3")
+    } else if (shipHealth == 3) {
+        shiphealth.anims.play("shiphealth2")
+    } else if (shipHealth == 2) {
+        shiphealth.anims.play("shiphealth1")
+    } else if (shipHealth == 1) {
+        shiphealth.anims.play("shiphealth0")
+    } else if (shipHealth == 0) {
+        physics.stop()
+    }
+    enemy.disableBody(true, true)
+    shipHealth--;
+
+}
