@@ -50,8 +50,10 @@ function preload() {
     this.load.image("tree", "assets/tree.png");
     this.load.image("treetopper", "assets/treetopper.png");
     this.load.image("ground", "assets/platform.png");
+    this.load.image("title", "assets/title.png");
     this.load.image("star", "assets/star.png");
     this.load.image("bomb", "assets/bomb.png");
+    this.load.image("gameover", "assets/gameover.png");
     this.load.image("myship", "assets/myship.png");
     this.load.spritesheet("dude", "assets/dude.png", 
         { frameWidth: 32, frameHeight: 48 });
@@ -67,17 +69,17 @@ function preload() {
         { frameWidth: 18, frameHeight: 10 });
     this.load.spritesheet("shiphealth", "assets/shiphealth.png", 
         { frameWidth: 20, frameHeight: 100 });
-        
+    this.load.spritesheet("endless", "assets/endlessbutton.png", 
+        { frameWidth: 200, frameHeight: 100 });
 }
 
 
 
 
 function create() {
-    
+
     //for movement - adds cursors and keys so it works when you press buttons
     cursors = this.input.keyboard.createCursorKeys();
-    console.log(cursors)
     keys = this.input.keyboard.addKeys({'A':65, 'D':68, 'W':87, 'S':83, 'Space':32, 'ctrl':17});
     
     
@@ -86,15 +88,30 @@ function create() {
     
     
     platforms = this.physics.add.staticGroup();
+    titles = this.physics.add.staticGroup();
     ship = this.physics.add.staticGroup();
-    enemies = this.physics.add.group({allowGravity: false, immovable: true, key:"enemy"});
-    fastEnemies = this.physics.add.group({allowGravity: false, immovable: true, key:"fastEnemy"});
+    enemies = this.physics.add.group({allowGravity: false, immovable: true});
+    fastEnemies = this.physics.add.group({allowGravity: false, immovable: true});
     fireballs1 = this.physics.add.group({allowGravity: false, immovable: true});
     fireballs2 = this.physics.add.group({allowGravity: false, immovable: true});
     fireball1 = fireballs1.create(-100, -100, "fireball")
     fireball2 = fireballs2.create(-100, -100, "fireball")
-    shiphealth = platforms.create(200, 200, "shiphealth")
+    shiphealth = platforms.create(10, 550, "shiphealth")
     myship = ship.create(793, 300, "myship")
+    title = titles.create(400, 200, "title")
+    endlessbutton = titles.create(400, 400, "endless").setInteractive();
+
+    endlessbutton.on('pointerover', function(pointer) {
+        endlessbutton.setFrame(1)
+    })
+    endlessbutton.on('pointerout', function(pointer) {
+        endlessbutton.setFrame(0)
+    })
+    endlessbutton.on('pointerup', function(pointer) {
+        gameStart = 3;
+        endlessbutton.setActive(false).setVisible(false).setInteractive(false)
+        title.setActive(false).setVisible(false).setInteractive(false)
+    })
 
 
 
@@ -478,9 +495,9 @@ function enemyHitShip(enemy, myship) {
     } else if (shipHealth == 2) {
         shiphealth.anims.play("shiphealth1")
     } else if (shipHealth == 1) {
-        shiphealth.anims.play("shiphealth0")
     } else if (shipHealth == 0) {
-        physics.stop()
+        title = titles.create(400, 200, "gameover")
+        gameStart = 1
     }
     enemy.disableBody(true, true)
     shipHealth--;
@@ -506,9 +523,10 @@ function fastEnemyHitShip(enemy, myship) {
     } else if (shipHealth == 2) {
         shiphealth.anims.play("shiphealth1")
     } else if (shipHealth == 1) {
-        shiphealth.anims.play("shiphealth0")
     } else if (shipHealth == 0) {
-        physics.stop()
+        title = titles.create(400, 200, "gameover")
+
+        gameStart = 1
     }
     enemy.disableBody(true, true)
     shipHealth--;

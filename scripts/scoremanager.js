@@ -6,12 +6,9 @@ var player2score = 0;
 function changeScoreUp(id, boolean, player) {
     if(boolean) {
         if (player == 1) {
-            console.log(player1score)
             document.getElementById(id).innerHTML = "+" + player1score;
-            console.log(player1score)
         } else if (player == 2) {
             document.getElementById(id).innerHTML = "+" + player2score;
-            console.log(player2score)
         }
     } else {
         document.getElementById(id).innerHTML = "O"
