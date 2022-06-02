@@ -9,7 +9,7 @@ let config = {
     physics: {
         default: "arcade",
         arcade: {
-            gravity: { y: -10 },
+            gravity: { y: 0 },
             debug: false
         }
     },
@@ -53,7 +53,9 @@ function preload() {
     this.load.image("title", "assets/title.png");
     this.load.image("star", "assets/star.png");
     this.load.image("bomb", "assets/bomb.png");
+    this.load.image("info", "assets/info.png");
     this.load.image("gameover", "assets/gameover.png");
+    this.load.image("donuts", "assets/donuts.png");
     this.load.image("myship", "assets/myship.png");
     this.load.spritesheet("dude", "assets/dude.png", 
         { frameWidth: 32, frameHeight: 48 });
@@ -70,6 +72,8 @@ function preload() {
     this.load.spritesheet("shiphealth", "assets/shiphealth.png", 
         { frameWidth: 20, frameHeight: 100 });
     this.load.spritesheet("endless", "assets/endlessbutton.png", 
+        { frameWidth: 200, frameHeight: 100 });
+    this.load.spritesheet("continue", "assets/continue.png", 
         { frameWidth: 200, frameHeight: 100 });
 }
 
@@ -100,6 +104,8 @@ function create() {
     myship = ship.create(793, 300, "myship")
     title = titles.create(400, 200, "title")
     endlessbutton = titles.create(400, 400, "endless").setInteractive();
+    continuebutton = titles.create(400, 575, "continue").setActive(false).setVisible(false).setInteractive();
+    info = titles.create(400, 300, "info").setActive(false).setVisible(false)
 
     endlessbutton.on('pointerover', function(pointer) {
         endlessbutton.setFrame(1)
@@ -108,11 +114,27 @@ function create() {
         endlessbutton.setFrame(0)
     })
     endlessbutton.on('pointerup', function(pointer) {
-        gameStart = 3;
+        gameStart = 2;
         endlessbutton.setActive(false).setVisible(false).setInteractive(false)
         title.setActive(false).setVisible(false).setInteractive(false)
+        info.setActive(true).setVisible(true);
+        continuebutton.setActive(true).setVisible(true).setInteractive(true);
+
+    })
+    
+    continuebutton.on('pointerover', function(pointer) {
+        continuebutton.setFrame(1)
+    })
+    continuebutton.on('pointerout', function(pointer) {
+        continuebutton.setFrame(0)
     })
 
+    continuebutton.on('pointerup', function(pointer) {
+        gameStart = 3;
+        continuebutton.setActive(false).setVisible(false).setInteractive(false)
+        info.setActive(false).setVisible(false)
+
+    })
 
 
 
@@ -125,7 +147,7 @@ function create() {
     //platforms.create(600, 568, "ground").setScale(2).refreshBody();
 
     player1 = this.physics.add.sprite(700, 150, "lemon", {allowGravity: false});
-    player2 = this.physics.add.sprite(700, 450, "lemon", {allowGravity: false});
+    player2 = this.physics.add.sprite(700, 450, "lemon", {allowGravity: false}).setTint(0xff4f6f);
 
     player1.setBounce(0.2);
     player1.setCollideWorldBounds(true)
@@ -259,7 +281,7 @@ function create() {
     this.physics.add.overlap(fastEnemies, ship, fastEnemyHitShip, null, this);
 
 
-    
+
 
 
 
@@ -269,11 +291,12 @@ function create() {
 
 
 function update() {
+
     if (gameStart == 3) { // 1 for stop, 2 for controls, 3 for start
     if(cameraSetup >= 100) { 
         spawnEnemy();
         spawnFastEnemy();
-        cameraChange = -1
+        cameraChange = -1;
 
     }
 
@@ -496,6 +519,7 @@ function enemyHitShip(enemy, myship) {
         shiphealth.anims.play("shiphealth1")
     } else if (shipHealth == 1) {
     } else if (shipHealth == 0) {
+        title = titles.create(655, 600, "donuts")
         title = titles.create(400, 200, "gameover")
         gameStart = 1
     }
@@ -525,7 +549,7 @@ function fastEnemyHitShip(enemy, myship) {
     } else if (shipHealth == 1) {
     } else if (shipHealth == 0) {
         title = titles.create(400, 200, "gameover")
-
+        title = titles.create(655, 600, "donuts")
         gameStart = 1
     }
     enemy.disableBody(true, true)
