@@ -1,7 +1,7 @@
 //player 1
 
-var player1score = 0;
-var player2score = 0;
+var player1score = 1;
+var player2score = 1;
 
 function changeScoreUp(id, boolean, player) {
     if(boolean) {
@@ -117,3 +117,5 @@ function changeTextIncrament2down() {
     }
     changeScoreDown("player2-5")
 } */
+
+// I wish I had made it so it's every 10 points the score goes up but oh well

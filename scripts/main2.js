@@ -3,6 +3,7 @@ let canvasWidth = 800;
 
 let config = {
     type: Phaser.AUTO,
+    //puts the canvas in the game-box div
     parent: 'game-box',
     width: canvasWidth,
     height: 600,
@@ -23,7 +24,7 @@ let config = {
 
 //better idea: teamwork game like space invaders
 
-
+//variables. the playerTimers are so you can't shoot infinite fireballs at once.
 let game = new Phaser.Game(config);
 let platforms;
 let player;
@@ -84,13 +85,13 @@ function create() {
 
     //for movement - adds cursors and keys so it works when you press buttons
     cursors = this.input.keyboard.createCursorKeys();
-    keys = this.input.keyboard.addKeys({'A':65, 'D':68, 'W':87, 'S':83, 'Space':32, 'ctrl':17});
+    keys = this.input.keyboard.addKeys({'A':65, 'D':68, 'W':87, 'S':83, 'Space':32, 'ctrl':17, 'tab':192});
     
     
-    
+    //sky
     this.add.image(400, 300, "sky").setScale(0.5).setTint(0x4f4f6f);
     
-    
+    //a bunch of groups and default objects so the game doesn't crash when looking for an object that hasn't spawned yet.
     platforms = this.physics.add.staticGroup();
     titles = this.physics.add.staticGroup();
     ship = this.physics.add.staticGroup();
@@ -107,6 +108,7 @@ function create() {
     continuebutton = titles.create(400, 575, "continue").setActive(false).setVisible(false).setInteractive();
     info = titles.create(400, 300, "info").setActive(false).setVisible(false)
 
+    //endless mode button on startup
     endlessbutton.on('pointerover', function(pointer) {
         endlessbutton.setFrame(1)
     })
@@ -122,6 +124,7 @@ function create() {
 
     })
     
+    //continue button on second screen
     continuebutton.on('pointerover', function(pointer) {
         continuebutton.setFrame(1)
     })
@@ -140,12 +143,7 @@ function create() {
 
 
 
-
-
-
-    //ground
-    //platforms.create(600, 568, "ground").setScale(2).refreshBody();
-
+    //making you.
     player1 = this.physics.add.sprite(700, 150, "lemon", {allowGravity: false});
     player2 = this.physics.add.sprite(700, 450, "lemon", {allowGravity: false}).setTint(0xff4f6f);
 
@@ -154,6 +152,7 @@ function create() {
     player2.setBounce(0.2);
     player2.setCollideWorldBounds(true)
 
+    //animation for lemons and cronalas.
     this.anims.create({
         key: "left",
         frames: this.anims.generateFrameNumbers("lemon", { start: 0, end: 1}),
@@ -208,7 +207,7 @@ function create() {
     });
 
 
-
+//animation for ship health
     this.anims.create({
         key: "shiphealth10",
         frames: this.anims.generateFrameNumbers("shiphealth", {start: 0, end: 0}),
@@ -266,6 +265,7 @@ function create() {
     });
 
 
+    //collision so things hit each other
     this.physics.add.collider(player1, platforms);
     this.physics.add.collider(player2, platforms);
     this.physics.add.collider(player1, enemies);
@@ -292,9 +292,13 @@ function create() {
 
 function update() {
 
+    //a leftover variable from a scrapped final project I use to spawn the enemies every so often
     if (gameStart == 3) { // 1 for stop, 2 for controls, 3 for start
     if(cameraSetup >= 100) { 
         spawnEnemy();
+        spawnEnemy();
+        spawnEnemy();
+        spawnFastEnemy();
         spawnFastEnemy();
         cameraChange = -1;
 
@@ -302,12 +306,16 @@ function update() {
 
     if(cameraSetup <= 0) { 
         spawnEnemy();
+        spawnEnemy();
+        spawnFastEnemy();
+        spawnFastEnemy();
         spawnFastEnemy();
         cameraChange = 1
         
     }
 
 
+    //MOVE the players. for player 1
     if (keys.W.isDown && keys.A.isDown) { //up left
         player1.setVelocityX(-160);
         player1.setVelocityY(-160);
@@ -357,7 +365,7 @@ function update() {
 
 
 
-    
+    //and player 2
     if (cursors.up.isDown && cursors.left.isDown) { //up left
         player2.setVelocityX(-160);
         player2.setVelocityY(-160);
@@ -416,7 +424,7 @@ function update() {
     }
 
 
-    //makes it so the cronalas  animate
+    //if true. Makes cronalas animate, changes the gametimer, makes the cronalas move. reply is the cronalas
     if(true) {
         reply.anims.play("moveCronala")
         reply2.anims.play("moveCronala2")
@@ -429,17 +437,12 @@ function update() {
         player2Timer -= 1;
         gameTimer += 1;
     }
-    } else {
-        makeButton()
-    }
+    } 
 
 
 
 };
 
-function makeButton() {
-    gameStart 
-}
 
 function makeEnemy(x, y) {
     reply = enemies.create(x, y, "cronala");
@@ -498,6 +501,8 @@ function hitCronala2_fireball2(fireball, fastEnemy) {
 
     changeTextIncrament2()
 }
+
+//if the cronala hits the ship, change the ship health.
 function enemyHitShip(enemy, myship) {
     if (shipHealth == 10) {
         shiphealth.anims.play("shiphealth9")
